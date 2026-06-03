@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Module.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#createGame">createGame</a></li><li><a href="global.html#getCurrentPlayer">getCurrentPlayer</a></li><li><a href="global.html#getWinner">getWinner</a></li><li><a href="global.html#isGameOver">isGameOver</a></li><li><a href="global.html#movePiece">movePiece</a></li><li><a href="global.html#rollDice">rollDice</a></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Module.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Creates a new simplified Ludo game.
+ *
+ * @returns {Object} The initial game state.
+ */
+export function createGame() {
+    return {
+        currentPlayer: "Red",
+
+        diceValue: null,
+
+        redPieces: [
+            { id: "R1", position: null },
+            { id: "R2", position: null }
+        ],
+
+        bluePieces: [
+            { id: "B1", position: null },
+            { id: "B2", position: null }
+        ],
+
+        winner: null
+    };
+}
+
+/**
+ * Returns the current player.
+ *
+ * @param {Object} gameState The current game state.
+ * @returns {String} The current player.
+ */
+export function getCurrentPlayer(gameState) {
+    return gameState.currentPlayer;
+}
+
+/**
+ * Rolls a six-sided dice and stores the value in the game state.
+ *
+ * @param {Object} gameState The current game state.
+ * @returns {Object} Updated game state with a dice value.
+ */
+export function rollDice(gameState) {
+    const diceValue = Math.floor(Math.random() * 6) + 1;
+
+    return {
+        ...gameState,
+        diceValue: diceValue
+    };
+}
+
+/**
+ * Checks whether the game has ended.
+ *
+ * @param {Object} gameState The current game state.
+ * @returns {Boolean} True if the game is over, otherwise false.
+ */
+export function isGameOver(gameState) {
+    return gameState.winner !== null;
+}
+
+/**
+ * Returns the winner of the game.
+ *
+ * @param {Object} gameState The current game state.
+ * @returns {String|null} The winner, or null if there is no winner.
+ */
+export function getWinner(gameState) {
+    return gameState.winner;
+}
+
+/**
+ * Moves the selected piece forward according to the current dice value.
+ * Pieces that are still at Home can only enter the board when the dice value is 6.
+ *
+ * @param {Object} gameState The current game state.
+ * @param {String} pieceId The id of the selected piece.
+ * @returns {Object} Updated game state after moving the piece.
+ */
+export function movePiece(gameState, pieceId) {
+    const currentPlayer = gameState.currentPlayer;
+    const diceValue = gameState.diceValue;
+
+    const pieceGroups = {
+        Red: "redPieces",
+        Blue: "bluePieces"
+    };
+
+    const currentPiecesKey = pieceGroups[currentPlayer];
+
+    const selectedPiece = gameState[currentPiecesKey].find((piece) => {
+        return piece.id === pieceId;
+    });
+
+    if (selectedPiece.position === null &amp;&amp; diceValue !== 6) {
+        return gameState;
+    }
+
+    const updatedPieces = gameState[currentPiecesKey].map((piece) => {
+        if (piece.id === pieceId) {
+            const newPosition = piece.position === null
+                ? 0
+                : Math.min(piece.position + diceValue, 20);
+
+            return {
+                ...piece,
+                position: newPosition
+            };
+        }
+
+        return piece;
+    });
+
+    const hasWon = updatedPieces.every((piece) => {
+        return piece.position !== null &amp;&amp; piece.position >= 20;
+    });
+
+    return {
+        ...gameState,
+        [currentPiecesKey]: updatedPieces,
+        currentPlayer: hasWon
+            ? currentPlayer
+            : diceValue === 6
+                ? currentPlayer
+                : currentPlayer === "Red"
+                    ? "Blue"
+                    : "Red",
+        diceValue: null,
+        winner: hasWon ? currentPlayer : null
+    };
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Wed Jun 03 2026 16:53:56 GMT+0100 (British Summer Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+    <link type="text/css" rel="stylesheet" href="custom.css">
+    
+</body>
+</html>

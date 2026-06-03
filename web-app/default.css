@@ -1,0 +1,302 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f7f3ec;
+    color: #2f2f2f;
+    max-width: 980px;
+    margin: 32px auto;
+    padding: 24px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 40px;
+    margin-bottom: 24px;
+}
+
+h2 {
+    margin-top: 28px;
+    border-bottom: 2px solid #d8c7aa;
+    padding-bottom: 6px;
+}
+
+p {
+    font-size: 18px;
+}
+
+#current-player {
+    text-align: center;
+    font-weight: bold;
+    font-size: 26px;
+    margin: 18px 0 20px;
+}
+
+.current-player-name {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    color: white;
+}
+
+.player-red {
+    background: #d84c4c;
+}
+
+.player-blue {
+    background: #4c7ed8;
+}
+
+
+.dice-panel {
+    background: white;
+    border: 2px solid #d8c7aa;
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+#dice-value {
+    margin: 0;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#dice-face {
+    width: 86px;
+    height: 86px;
+    border-radius: 16px;
+    background: #ffffff;
+    border: 3px solid #2f2f2f;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.18);
+    position: relative;
+    cursor: pointer;
+}
+
+#dice-face:hover {
+    transform: translateY(-2px);
+}
+
+.dice-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #2f2f2f;
+    position: absolute;
+}
+
+.top-left {
+    top: 16px;
+    left: 16px;
+}
+
+.top-right {
+    top: 16px;
+    right: 16px;
+}
+
+.middle-left {
+    top: 36px;
+    left: 16px;
+}
+
+.middle-right {
+    top: 36px;
+    right: 16px;
+}
+
+.center {
+    top: 36px;
+    left: 36px;
+}
+
+.bottom-left {
+    bottom: 16px;
+    left: 16px;
+}
+
+.bottom-right {
+    bottom: 16px;
+    right: 16px;
+}
+
+#status-text {
+    margin: 0;
+    min-height: 24px;
+    font-size: 15px;
+    color: #6b4f35;
+    text-align: center;
+}
+
+button {
+    border: none;
+    border-radius: 12px;
+    padding: 12px 18px;
+    margin: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    background: #8b5e3c;
+    color: white;
+}
+
+button:hover {
+    background: #70482d;
+}
+
+button:disabled {
+    background: #cfc7bd;
+    color: #777;
+    cursor: not-allowed;
+}
+
+#winner {
+    font-size: 24px;
+    font-weight: bold;
+    color: #8b2f2f;
+    margin-top: 20px;
+}
+
+#board {
+    margin-top: 20px;
+}
+
+.ludo-board {
+    display: grid;
+    grid-template-columns: 180px minmax(260px, 1fr) 180px;
+    gap: 20px;
+    align-items: stretch;
+}
+
+.home-area {
+    min-height: 220px;
+    border-radius: 20px;
+    padding: 16px;
+    text-align: center;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.red-home {
+    background: #ffd6d6;
+    border: 3px solid #d84c4c;
+}
+
+.blue-home {
+    background: #d6e7ff;
+    border: 3px solid #4c7ed8;
+}
+
+.home-pieces {
+    margin-top: 20px;
+    font-size: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.path-area {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: #d8c7aa;
+    padding: 6px;
+    border-radius: 18px;
+    overflow: hidden;
+}
+
+.path-row {
+    display: flex;
+    width: 100%;
+}
+
+.path-space {
+    flex: 1;
+    min-height: 76px;
+    border: 1px solid #d8c7aa;
+    background: #fffaf2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 4px;
+    position: relative;
+}
+
+.space-number {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    font-size: 10px;
+    color: #999;
+}
+
+.space-pieces {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+}
+
+.red-home .home-pieces {
+    color: #c62828;
+}
+
+.blue-home .home-pieces {
+    color: #1565c0;
+}
+
+.piece {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    margin: 2px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.22);
+}
+
+.red-piece {
+    background: #d84c4c;
+}
+
+.blue-piece {
+    background: #4c7ed8;
+}
+
+.path-space:hover {
+    background: #f5efe4;
+}
+
+.piece:hover:not(:disabled) {
+    transform: translateY(-2px);
+}
+
+.piece:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+@media (max-width: 760px) {
+    .ludo-board {
+        grid-template-columns: 1fr;
+    }
+
+    .home-area {
+        min-height: 140px;
+    }
+}
