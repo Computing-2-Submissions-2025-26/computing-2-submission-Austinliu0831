@@ -10,13 +10,13 @@ export function createGame() {
         diceValue: null,
 
         redPieces: [
-            { id: "R1", position: null },
-            { id: "R2", position: null }
+            { id: "R1", position: null, progress: null },
+            { id: "R2", position: null, progress: null }
         ],
 
         bluePieces: [
-            { id: "B1", position: null },
-            { id: "B2", position: null }
+            { id: "B1", position: null, progress: null },
+            { id: "B2", position: null, progress: null }
         ],
 
         winner: null
@@ -71,6 +71,8 @@ export function getWinner(gameState) {
 /**
  * Moves the selected piece forward according to the current dice value.
  * Pieces that are still at Home can only enter the board when the dice value is 6.
+ * Each player first moves around the shared public path from progress 0 to 21, then enters their own final lane from progress 22 to 26.
+ * If a piece lands on an opponent's piece on the shared public path, the opponent's piece is sent back Home.
  *
  * @param {Object} gameState The current game state.
  * @param {String} pieceId The id of the selected piece.
@@ -85,7 +87,20 @@ export function movePiece(gameState, pieceId) {
         Blue: "bluePieces"
     };
 
+    const startPositions = {
+        Red: 0,
+        Blue: 11
+    };
+
+    const pathLength = 22;
+    const publicPathProgressLimit = 21;
+    const finishProgress = 26;
+
     const currentPiecesKey = pieceGroups[currentPlayer];
+
+    const opponentPiecesKey = currentPlayer === "Red"
+        ? "bluePieces"
+        : "redPieces";
 
     const selectedPiece = gameState[currentPiecesKey].find((piece) => {
         return piece.id === pieceId;
@@ -97,13 +112,37 @@ export function movePiece(gameState, pieceId) {
 
     const updatedPieces = gameState[currentPiecesKey].map((piece) => {
         if (piece.id === pieceId) {
-            const newPosition = piece.position === null
+            const newProgress = piece.progress === null
                 ? 0
-                : Math.min(piece.position + diceValue, 20);
+                : Math.min(piece.progress + diceValue, finishProgress);
+
+            const newPosition = newProgress <= publicPathProgressLimit
+                ? (startPositions[currentPlayer] + newProgress) % pathLength
+                : `${currentPlayer}-final-${newProgress - publicPathProgressLimit}`;
 
             return {
                 ...piece,
-                position: newPosition
+                position: newPosition,
+                progress: newProgress
+            };
+        }
+
+        return piece;
+    });
+
+    const movedPiece = updatedPieces.find((piece) => {
+        return piece.id === pieceId;
+    });
+
+    const updatedOpponentPieces = gameState[opponentPiecesKey].map((piece) => {
+        const movedToPublicPath = typeof movedPiece.position === "number";
+        const opponentOnSameSpace = piece.position === movedPiece.position;
+
+        if (movedToPublicPath && opponentOnSameSpace) {
+            return {
+                ...piece,
+                position: null,
+                progress: null
             };
         }
 
@@ -111,12 +150,13 @@ export function movePiece(gameState, pieceId) {
     });
 
     const hasWon = updatedPieces.every((piece) => {
-        return piece.position !== null && piece.position >= 20;
+        return piece.progress !== null && piece.progress >= finishProgress;
     });
 
     return {
         ...gameState,
         [currentPiecesKey]: updatedPieces,
+        [opponentPiecesKey]: updatedOpponentPieces,
         currentPlayer: hasWon
             ? currentPlayer
             : diceValue === 6

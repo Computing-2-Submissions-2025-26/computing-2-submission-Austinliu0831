@@ -116,50 +116,90 @@ function render() {
         })
         .join("");
 
-    const rows = [
-        [0, 1, 2],
-        [5, 4, 3],
-        [6, 7, 8],
-        [11, 10, 9],
-        [12, 13, 14],
-        [17, 16, 15],
-        [18, 19, 20]
+    const ringPositions = [
+        { space: 0, row: 1, column: 1 },
+        { space: 1, row: 1, column: 2 },
+        { space: 2, row: 1, column: 3 },
+        { space: 3, row: 1, column: 4 },
+        { space: 4, row: 1, column: 5 },
+        { space: 5, row: 1, column: 6 },
+        { space: 6, row: 1, column: 7 },
+        { space: 7, row: 2, column: 7 },
+        { space: 8, row: 3, column: 7 },
+        { space: 9, row: 4, column: 7 },
+        { space: 10, row: 5, column: 7 },
+        { space: 11, row: 6, column: 7 },
+        { space: 12, row: 6, column: 6 },
+        { space: 13, row: 6, column: 5 },
+        { space: 14, row: 6, column: 4 },
+        { space: 15, row: 6, column: 3 },
+        { space: 16, row: 6, column: 2 },
+        { space: 17, row: 6, column: 1 },
+        { space: 18, row: 5, column: 1 },
+        { space: 19, row: 4, column: 1 },
+        { space: 20, row: 3, column: 1 },
+        { space: 21, row: 2, column: 1 }
     ];
 
-    const pathRows = rows.map((row) => {
-        const spaces = row.map((space) => {
-            const piecesOnSpace = [];
+    const pathSpaces = ringPositions.map(({ space, row, column }) => {
+        const piecesOnSpace = [];
 
-            game.redPieces.forEach((piece) => {
-                if (piece.position === space) {
-                    piecesOnSpace.push(
-                        renderPieceButton(piece, "red-piece")
-                    );
-                }
-            });
+        game.redPieces.forEach((piece) => {
+            if (piece.position === space) {
+                piecesOnSpace.push(
+                    renderPieceButton(piece, "red-piece")
+                );
+            }
+        });
 
-            game.bluePieces.forEach((piece) => {
-                if (piece.position === space) {
-                    piecesOnSpace.push(
-                        renderPieceButton(piece, "blue-piece")
-                    );
-                }
-            });
+        game.bluePieces.forEach((piece) => {
+            if (piece.position === space) {
+                piecesOnSpace.push(
+                    renderPieceButton(piece, "blue-piece")
+                );
+            }
+        });
+
+        const startLabel = space === 0
+            ? '<span class="start-label red-start">Red Start</span><span class="start-arrow red-start">→</span>'
+            : space === 11
+                ? '<span class="start-label blue-start">Blue Start</span><span class="start-arrow blue-start">←</span>'
+                : '';
+
+        return `
+            <div class="path-space" style="grid-row: ${row}; grid-column: ${column};">
+                ${startLabel}
+                <span class="space-pieces">${piecesOnSpace.join("")}</span>
+            </div>
+        `;
+    });
+
+    const renderFinalLane = (playerName, pieces, colourClass) => {
+        const spaces = [1, 2, 3, 4, 5].map((laneSpace) => {
+            const piecesOnSpace = pieces
+                .filter((piece) => piece.position === `${playerName}-final-${laneSpace}`)
+                .map((piece) => {
+                    return renderPieceButton(piece, colourClass);
+                })
+                .join("");
+
+            const finishLabel = laneSpace === 5
+                ? `<span class="finish-label ${playerName.toLowerCase()}-finish">${playerName} Finish</span>`
+                : "";
 
             return `
-                <div class="path-space">
-                    <span class="space-number">${space}</span>
-                    <span class="space-pieces">${piecesOnSpace.join("")}</span>
+                <div class="final-space ${playerName.toLowerCase()}-final-space">
+                    ${finishLabel}
+                    <span class="space-pieces">${piecesOnSpace}</span>
                 </div>
             `;
         });
 
-        return `
-            <div class="path-row">
-                ${spaces.join("")}
-            </div>
-        `;
-    });
+        return spaces.join("");
+    };
+
+    const redFinalLane = renderFinalLane("Red", game.redPieces, "red-piece");
+    const blueFinalLane = renderFinalLane("Blue", game.bluePieces, "blue-piece");
 
     boardDiv.innerHTML = `
         <div class="ludo-board">
@@ -169,7 +209,16 @@ function render() {
             </div>
 
             <div class="path-area">
-                ${pathRows.join("")}
+                ${pathSpaces.join("")}
+
+                <div class="final-lane red-final-lane">
+                    ${redFinalLane}
+                </div>
+
+                <div class="final-lane blue-final-lane">
+                    ${blueFinalLane}
+                </div>
+
             </div>
 
             <div class="home-area blue-home">
@@ -184,11 +233,11 @@ function render() {
             ? `Winner: ${game.winner}`
             : "";
 
-    rollButton.classList.toggle("disabled-dice", Boolean(game.winner));
+    rollButton.classList.toggle("disabled-dice", Boolean(game.winner) || game.diceValue !== null);
 }
 
 rollButton.addEventListener("click", () => {
-    if (game.winner) {
+    if (game.winner || game.diceValue !== null) {
         return;
     }
 
