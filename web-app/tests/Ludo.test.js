@@ -1,18 +1,12 @@
-import {
-    createGame,
-    getCurrentPlayer,
-    rollDice,
-    isGameOver,
-    getWinner,
-    movePiece
-} from "../Module.js";
+import Ludo from "../Ludo.js";
 
 import assert from "assert";
 
-describe("Simplified Ludo game module", () => {
+describe("Simplified Ludo game module", function () {
 
-    it("should start with Red player", () => {
-        const game = createGame();
+    // Check that the new game starts with red.
+    it("should start with Red player", function () {
+        const game = Ludo.createGame();
 
         assert.equal(
             game.currentPlayer,
@@ -20,43 +14,48 @@ describe("Simplified Ludo game module", () => {
         );
     });
 
-    it("should return the current player", () => {
-        const game = createGame();
+    // Check that getCurrentPlayer returns the active player.
+    it("should return the current player", function () {
+        const game = Ludo.createGame();
 
         assert.equal(
-            getCurrentPlayer(game),
+            Ludo.getCurrentPlayer(game),
             "Red"
         );
     });
 
-    it("should roll a dice value between 1 and 6", () => {
-        const game = createGame();
-        const updatedGame = rollDice(game);
+    // Check that dice values are always within the valid range.
+    it("should roll a dice value between 1 and 6", function () {
+        const game = Ludo.createGame();
+        const updatedGame = Ludo.rollDice(game);
 
         assert.ok(updatedGame.diceValue >= 1);
         assert.ok(updatedGame.diceValue <= 6);
     });
 
-    it("should not be over at the start", () => {
-        const game = createGame();
+    // Check that a new game is not over.
+    it("should not be over at the start", function () {
+        const game = Ludo.createGame();
 
         assert.equal(
-            isGameOver(game),
+            Ludo.isGameOver(game),
             false
         );
     });
 
-    it("should have no winner at the start", () => {
-        const game = createGame();
+    // Check that a new game starts without a winner.
+    it("should have no winner at the start", function () {
+        const game = Ludo.createGame();
 
         assert.equal(
-            getWinner(game),
+            Ludo.getWinner(game),
             null
         );
     });
 
-    it("should start all pieces at Home", () => {
-        const game = createGame();
+    // Check that all pieces begin at Home.
+    it("should start all pieces at Home", function () {
+        const game = Ludo.createGame();
 
         assert.equal(game.redPieces[0].position, null);
         assert.equal(game.redPieces[1].position, null);
@@ -69,50 +68,54 @@ describe("Simplified Ludo game module", () => {
         assert.equal(game.bluePieces[1].progress, null);
     });
 
-    it("should not move a new piece out of Home when the dice value is not 6", () => {
+    // Check that a piece cannot leave Home without rolling a 6.
+    it("should not move a new piece out of Home when the dice value is not 6", function () {
         const game = {
-            ...createGame(),
+            ...Ludo.createGame(),
             diceValue: 4
         };
 
-        const updatedGame = movePiece(game, "R1");
+        const updatedGame = Ludo.movePiece(game, "R1");
 
         assert.equal(updatedGame.redPieces[0].position, null);
         assert.equal(updatedGame.redPieces[0].progress, null);
     });
 
-    it("should move a new Red piece out of Home when the dice value is 6", () => {
+    // Check that a red piece enters the board after rolling a 6.
+    it("should move a new Red piece out of Home when the dice value is 6", function () {
         const game = {
-            ...createGame(),
+            ...Ludo.createGame(),
             diceValue: 6
         };
 
-        const updatedGame = movePiece(game, "R1");
+        const updatedGame = Ludo.movePiece(game, "R1");
 
         assert.equal(updatedGame.redPieces[0].position, 0);
         assert.equal(updatedGame.redPieces[0].progress, 0);
     });
 
-    it("should move a new Blue piece out of Home from Blue start position when the dice value is 6", () => {
+    // Check that a blue piece enters from the Blue start square.
+    it("should move a new Blue piece out of Home from Blue start position when the dice value is 6", function () {
         const game = {
-            ...createGame(),
+            ...Ludo.createGame(),
             currentPlayer: "Blue",
             diceValue: 6
         };
 
-        const updatedGame = movePiece(game, "B1");
+        const updatedGame = Ludo.movePiece(game, "B1");
 
         assert.equal(updatedGame.bluePieces[0].position, 11);
         assert.equal(updatedGame.bluePieces[0].progress, 0);
     });
 
-    it("should keep the same player's turn after rolling a 6", () => {
+    // Check that rolling a value 6 gets an extra turn.
+    it("should keep the same player's turn after rolling a 6", function () {
         const game = {
-            ...createGame(),
+            ...Ludo.createGame(),
             diceValue: 6
         };
 
-        const updatedGame = movePiece(game, "R1");
+        const updatedGame = Ludo.movePiece(game, "R1");
 
         assert.equal(
             updatedGame.currentPlayer,
@@ -120,9 +123,10 @@ describe("Simplified Ludo game module", () => {
         );
     });
 
-    it("should switch turn after moving with a dice value that is not 6", () => {
+    // Check that the turn passes to the other player after a normal move.
+    it("should switch turn after moving with a dice value that is not 6", function () {
         const game = {
-            ...createGame(),
+            ...Ludo.createGame(),
             diceValue: 4,
             redPieces: [
                 { id: "R1", position: 3, progress: 3 },
@@ -130,7 +134,7 @@ describe("Simplified Ludo game module", () => {
             ]
         };
 
-        const updatedGame = movePiece(game, "R1");
+        const updatedGame = Ludo.movePiece(game, "R1");
 
         assert.equal(
             updatedGame.currentPlayer,
@@ -138,9 +142,10 @@ describe("Simplified Ludo game module", () => {
         );
     });
 
-    it("should move a Red piece around the shared public path according to progress", () => {
+    // Check that red movement follows the shared path correctly.
+    it("should move a Red piece around the shared public path according to progress", function () {
         const game = {
-            ...createGame(),
+            ...Ludo.createGame(),
             diceValue: 4,
             redPieces: [
                 { id: "R1", position: 3, progress: 3 },
@@ -148,15 +153,16 @@ describe("Simplified Ludo game module", () => {
             ]
         };
 
-        const updatedGame = movePiece(game, "R1");
+        const updatedGame = Ludo.movePiece(game, "R1");
 
         assert.equal(updatedGame.redPieces[0].progress, 7);
         assert.equal(updatedGame.redPieces[0].position, 7);
     });
 
-    it("should send an opponent piece back Home when landing on it on the shared public path", () => {
+    // Check that landing on an opponent sends the opponent back home.
+    it("should send an opponent piece back Home when landing on it on the shared public path", function () {
         const game = {
-            ...createGame(),
+            ...Ludo.createGame(),
             diceValue: 4,
             redPieces: [
                 { id: "R1", position: 3, progress: 3 },
@@ -168,7 +174,7 @@ describe("Simplified Ludo game module", () => {
             ]
         };
 
-        const updatedGame = movePiece(game, "R1");
+        const updatedGame = Ludo.movePiece(game, "R1");
 
         assert.equal(updatedGame.redPieces[0].position, 7);
         assert.equal(updatedGame.redPieces[0].progress, 7);
@@ -176,9 +182,10 @@ describe("Simplified Ludo game module", () => {
         assert.equal(updatedGame.bluePieces[0].progress, null);
     });
 
-    it("should not capture an opponent piece in a final lane", () => {
+    // Check that pieces in final lanes cannot be captured.
+    it("should not capture an opponent piece in a final lane", function () {
         const game = {
-            ...createGame(),
+            ...Ludo.createGame(),
             diceValue: 4,
             redPieces: [
                 { id: "R1", position: "Red-final-1", progress: 22 },
@@ -190,7 +197,7 @@ describe("Simplified Ludo game module", () => {
             ]
         };
 
-        const updatedGame = movePiece(game, "R1");
+        const updatedGame = Ludo.movePiece(game, "R1");
 
         assert.equal(updatedGame.redPieces[0].position, "Red-final-5");
         assert.equal(updatedGame.redPieces[0].progress, 26);
@@ -198,9 +205,10 @@ describe("Simplified Ludo game module", () => {
         assert.equal(updatedGame.bluePieces[0].progress, 26);
     });
 
-    it("should move a Blue piece around the shared public path from Blue start position", () => {
+    // Check that blue movement follows the shared path correctly.
+    it("should move a Blue piece around the shared public path from Blue start position", function () {
         const game = {
-            ...createGame(),
+            ...Ludo.createGame(),
             currentPlayer: "Blue",
             diceValue: 4,
             bluePieces: [
@@ -209,15 +217,16 @@ describe("Simplified Ludo game module", () => {
             ]
         };
 
-        const updatedGame = movePiece(game, "B1");
+        const updatedGame = Ludo.movePiece(game, "B1");
 
         assert.equal(updatedGame.bluePieces[0].progress, 7);
         assert.equal(updatedGame.bluePieces[0].position, 18);
     });
 
-    it("should wrap a Blue piece around the shared public path", () => {
+    // Check that blue transitions correctly into its final lane.
+    it("should wrap a Blue piece around the shared public path", function () {
         const game = {
-            ...createGame(),
+            ...Ludo.createGame(),
             currentPlayer: "Blue",
             diceValue: 4,
             bluePieces: [
@@ -226,15 +235,16 @@ describe("Simplified Ludo game module", () => {
             ]
         };
 
-        const updatedGame = movePiece(game, "B1");
+        const updatedGame = Ludo.movePiece(game, "B1");
 
         assert.equal(updatedGame.bluePieces[0].progress, 25);
         assert.equal(updatedGame.bluePieces[0].position, "Blue-final-4");
     });
 
-    it("should move a Red piece into the Red final lane after public path progress 21", () => {
+    // Check that red enters its final lane after completing the public path.
+    it("should move a Red piece into the Red final lane after public path progress 21", function () {
         const game = {
-            ...createGame(),
+            ...Ludo.createGame(),
             diceValue: 4,
             redPieces: [
                 { id: "R1", position: 20, progress: 20 },
@@ -242,15 +252,16 @@ describe("Simplified Ludo game module", () => {
             ]
         };
 
-        const updatedGame = movePiece(game, "R1");
+        const updatedGame = Ludo.movePiece(game, "R1");
 
         assert.equal(updatedGame.redPieces[0].progress, 24);
         assert.equal(updatedGame.redPieces[0].position, "Red-final-3");
     });
 
-    it("should not set a winner when only one piece reaches final progress", () => {
+    // Check that one finished piece is not enough to win.
+    it("should not set a winner when only one piece reaches final progress", function () {
         const game = {
-            ...createGame(),
+            ...Ludo.createGame(),
             diceValue: 6,
             redPieces: [
                 { id: "R1", position: "Red-final-4", progress: 25 },
@@ -258,16 +269,17 @@ describe("Simplified Ludo game module", () => {
             ]
         };
 
-        const updatedGame = movePiece(game, "R1");
+        const updatedGame = Ludo.movePiece(game, "R1");
 
         assert.equal(updatedGame.redPieces[0].progress, 26);
         assert.equal(updatedGame.redPieces[0].position, "Red-final-5");
         assert.equal(updatedGame.winner, null);
     });
 
-    it("should set the winner when both pieces reach final progress", () => {
+    // Check that a player wins when both pieces reach the finish.
+    it("should set the winner when both pieces reach final progress", function () {
         const game = {
-            ...createGame(),
+            ...Ludo.createGame(),
             diceValue: 4,
             redPieces: [
                 { id: "R1", position: "Red-final-1", progress: 22 },
@@ -275,21 +287,22 @@ describe("Simplified Ludo game module", () => {
             ]
         };
 
-        const updatedGame = movePiece(game, "R1");
+        const updatedGame = Ludo.movePiece(game, "R1");
 
         assert.equal(updatedGame.redPieces[0].progress, 26);
         assert.equal(updatedGame.redPieces[0].position, "Red-final-5");
         assert.equal(updatedGame.winner, "Red");
     });
 
-    it("should be over when there is a winner", () => {
+    // Check that the game is marked as over once a winner exists.
+    it("should be over when there is a winner", function () {
         const game = {
-            ...createGame(),
+            ...Ludo.createGame(),
             winner: "Red"
         };
 
         assert.equal(
-            isGameOver(game),
+            Ludo.isGameOver(game),
             true
         );
     });

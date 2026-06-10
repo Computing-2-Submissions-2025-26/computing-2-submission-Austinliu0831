@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>Module.js - Documentation</title>
+    <title>Ludo.js - Documentation</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -29,13 +29,13 @@
 <nav >
     
     
-    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#createGame">createGame</a></li><li><a href="global.html#getCurrentPlayer">getCurrentPlayer</a></li><li><a href="global.html#getWinner">getWinner</a></li><li><a href="global.html#isGameOver">isGameOver</a></li><li><a href="global.html#movePiece">movePiece</a></li><li><a href="global.html#rollDice">rollDice</a></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Ludo.html">Ludo</a><ul class='methods'><li data-type='method'><a href="Ludo.html#.createGame">createGame</a></li><li data-type='method'><a href="Ludo.html#.getCurrentPlayer">getCurrentPlayer</a></li><li data-type='method'><a href="Ludo.html#.getWinner">getWinner</a></li><li data-type='method'><a href="Ludo.html#.isGameOver">isGameOver</a></li><li data-type='method'><a href="Ludo.html#.movePiece">movePiece</a></li><li data-type='method'><a href="Ludo.html#.rollDice">rollDice</a></li></ul></li></ul>
     
 </nav>
 
 <div id="main">
     
-    <h1 class="page-title">Module.js</h1>
+    <h1 class="page-title">Ludo.js</h1>
     
 
     
@@ -46,11 +46,51 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>/**
- * Creates a new simplified Ludo game.
- *
- * @returns {Object} The initial game state.
+ * This is a module for modelling and playing a two-player Ludo game.
+ * @namespace Ludo
+ * @author Yixuan Liu
+ * @version 2026
  */
-export function createGame() {
+
+const Ludo = Object.create(null);
+
+/**
+ * Players' colour in the game.
+ * @memberof Ludo
+ * @typedef {("Red" | "Blue")} Player
+ */
+
+/**
+ * A Ludo piece.
+ * `position` is either `null` for Home, a number for the shared public path,
+ * or a string for the fine lane of each colour.
+ * @memberof Ludo
+ * @typedef {Object} Piece
+ * @property {string} id The id of the piece.
+ * @property {(number | string | null)} position The piece's position on the board.
+ * @property {(number | null)} progress The distance that the piece has travelled from the start.
+ */
+
+/**
+ * The whole game state.
+ * @memberof Ludo
+ * @typedef {Object} GameState
+ * @property {Ludo.Player} currentPlayer The current player.
+ * @property {(number | null)} diceValue The current dice value.
+ * @property {Ludo.Piece[]} redPieces The Red player's pieces.
+ * @property {Ludo.Piece[]} bluePieces The Blue player's pieces.
+ * @property {(Ludo.Player | null)} winner The winning player, or null if no player has won.
+ */
+
+/**
+ * Creates a new game.
+ *
+ * @memberof Ludo
+ * @function
+ * @returns {Ludo.GameState} The start state of yje game.
+ */
+
+Ludo.createGame = function () {
     return {
         currentPlayer: "Red",
 
@@ -73,20 +113,24 @@ export function createGame() {
 /**
  * Returns the current player.
  *
- * @param {Object} gameState The current game state.
- * @returns {String} The current player.
+ * @memberof Ludo
+ * @function
+ * @param {Ludo.GameState} gameState The current game state.
+ * @returns {Ludo.Player} The current player.
  */
-export function getCurrentPlayer(gameState) {
+Ludo.getCurrentPlayer = function (gameState) {
     return gameState.currentPlayer;
 }
 
 /**
- * Rolls a six-sided dice and stores the value in the game state.
+ * Rolls the dice and stores the value in the game state.
  *
- * @param {Object} gameState The current game state.
- * @returns {Object} Updated game state with a dice value.
+ * @memberof Ludo
+ * @function
+ * @param {Ludo.GameState} gameState The current game state.
+ * @returns {Ludo.GameState} Updated game state with a dice value.
  */
-export function rollDice(gameState) {
+Ludo.rollDice = function (gameState) {
     const diceValue = Math.floor(Math.random() * 6) + 1;
 
     return {
@@ -98,34 +142,40 @@ export function rollDice(gameState) {
 /**
  * Checks whether the game has ended.
  *
- * @param {Object} gameState The current game state.
- * @returns {Boolean} True if the game is over, otherwise false.
+ * @memberof Ludo
+ * @function
+ * @param {Ludo.GameState} gameState The current game state.
+ * @returns {boolean} True if the game is over, otherwise false.
  */
-export function isGameOver(gameState) {
+Ludo.isGameOver = function (gameState) {
     return gameState.winner !== null;
 }
 
 /**
  * Returns the winner of the game.
  *
- * @param {Object} gameState The current game state.
- * @returns {String|null} The winner, or null if there is no winner.
+ * @memberof Ludo
+ * @function
+ * @param {Ludo.GameState} gameState The current game state.
+ * @returns {(Ludo.Player | null)} The winner, or null if there is no winner.
  */
-export function getWinner(gameState) {
+Ludo.getWinner = function (gameState) {
     return gameState.winner;
 }
 
 /**
- * Moves the selected piece forward according to the current dice value.
+ * Moves the selected piece forward according to the dice value.
  * Pieces that are still at Home can only enter the board when the dice value is 6.
  * Each player first moves around the shared public path from progress 0 to 21, then enters their own final lane from progress 22 to 26.
- * If a piece lands on an opponent's piece on the shared public path, the opponent's piece is sent back Home.
+ * If a piece lands on an opponent's piece on the shared public path, the opponent's piece will be sent back Home.
  *
- * @param {Object} gameState The current game state.
- * @param {String} pieceId The id of the selected piece.
- * @returns {Object} Updated game state after moving the piece.
+ * @memberof Ludo
+ * @function
+ * @param {Ludo.GameState} gameState The current game state.
+ * @param {string} pieceId The id of the selected piece.
+ * @returns {Ludo.GameState} Updated game state after moving the piece.
  */
-export function movePiece(gameState, pieceId) {
+Ludo.movePiece = function (gameState, pieceId) {
     const currentPlayer = gameState.currentPlayer;
     const diceValue = gameState.diceValue;
 
@@ -214,7 +264,9 @@ export function movePiece(gameState, pieceId) {
         diceValue: null,
         winner: hasWon ? currentPlayer : null
     };
-}</code></pre>
+}
+
+export default Object.freeze(Ludo);</code></pre>
         </article>
     </section>
 
@@ -228,7 +280,7 @@ export function movePiece(gameState, pieceId) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Wed Jun 03 2026 18:37:22 GMT+0100 (British Summer Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Fri Jun 05 2026 01:00:25 GMT+0100 (British Summer Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>

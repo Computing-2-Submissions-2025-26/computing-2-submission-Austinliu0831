@@ -1,10 +1,6 @@
-import {
-    createGame,
-    rollDice,
-    movePiece
-} from "./Module.js";
+import Ludo from "./Ludo.js";
 
-let game = createGame();
+let game = Ludo.createGame();
 let rollMessage = "";
 let displayedDiceValue = null;
 
@@ -240,8 +236,7 @@ rollButton.addEventListener("click", () => {
     if (game.winner || game.diceValue !== null) {
         return;
     }
-
-    game = rollDice(game);
+    game = Ludo.rollDice(game);
     displayedDiceValue = game.diceValue;
     rollMessage = "";
 
@@ -272,7 +267,7 @@ boardDiv.addEventListener("click", (event) => {
 
     const pieceId = pieceButton.dataset.pieceId;
 
-    game = movePiece(game, pieceId);
+    game = Ludo.movePiece(game, pieceId);
     displayedDiceValue = null;
     rollMessage = "";
 
@@ -280,8 +275,7 @@ boardDiv.addEventListener("click", (event) => {
 });
 
 restartButton.addEventListener("click", () => {
-
-    game = createGame();
+    game = Ludo.createGame();
     displayedDiceValue = null;
     rollMessage = "";
 
