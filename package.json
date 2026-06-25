@@ -3,7 +3,11 @@
   "type": "module",
   "version": "1.0.0",
   "description": "",
-  "main": "web-app/Module.js",
+  "main": "web-app/Ludo.js",
+  "scripts": {
+    "test": "mocha \"web-app/tests/**/*.js\"",
+    "docs": "jsdoc -c jsdoc.json"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {

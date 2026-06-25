@@ -81,6 +81,18 @@ describe("Simplified Ludo game module", function () {
         assert.equal(updatedGame.redPieces[0].progress, null);
     });
 
+    // Check that an invalid piece id does not change the game state.
+    it("should ignore an invalid piece id", function () {
+        const game = {
+            ...Ludo.createGame(),
+            diceValue: 6
+        };
+
+        const updatedGame = Ludo.movePiece(game, "R3");
+
+        assert.equal(updatedGame, game);
+    });
+
     // Check that a red piece enters the board after rolling a 6.
     it("should move a new Red piece out of Home when the dice value is 6", function () {
         const game = {

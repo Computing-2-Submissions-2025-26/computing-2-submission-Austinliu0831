@@ -156,6 +156,10 @@ Ludo.movePiece = function (gameState, pieceId) {
         return piece.id === pieceId;
     });
 
+    if (!selectedPiece) {
+        return gameState;
+    }
+
     if (selectedPiece.position === null && diceValue !== 6) {
         return gameState;
     }

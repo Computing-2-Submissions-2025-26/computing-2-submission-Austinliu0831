@@ -70,6 +70,9 @@ function renderPieceButton(piece, colourClass) {
     const piecePlayer = piece.id.startsWith("R") ? "Red" : "Blue";
     const isCurrentPlayerPiece = game.currentPlayer === piecePlayer;
     const canMovePiece = isCurrentPlayerPiece && canMoveWithDice(piece, game.diceValue) && !game.winner;
+    const pieceImage = piecePlayer === "Red"
+        ? "assets/Red Chess.png"
+        : "assets/Blue Chess.png";
 
     return `
         <button
@@ -78,7 +81,11 @@ function renderPieceButton(piece, colourClass) {
             aria-label="Move ${piece.id}"
             ${canMovePiece ? "" : "disabled"}
         >
-            ${piece.id}
+            <img
+                class="piece-image"
+                src="${pieceImage}"
+                alt="${piece.id}"
+            >
         </button>
     `;
 }
@@ -197,10 +204,13 @@ function render() {
     const redFinalLane = renderFinalLane("Red", game.redPieces, "red-piece");
     const blueFinalLane = renderFinalLane("Blue", game.bluePieces, "blue-piece");
 
+    const winnerOverlay = game.winner
+        ? `<div class="winner-overlay">Winner: ${game.winner}</div>`
+        : "";
+
     boardDiv.innerHTML = `
         <div class="ludo-board">
             <div class="home-area red-home">
-                <h3>Red Home</h3>
                 <div class="home-pieces">${redHomePieces || "Empty"}</div>
             </div>
 
@@ -215,19 +225,17 @@ function render() {
                     ${blueFinalLane}
                 </div>
 
+                ${winnerOverlay}
+
             </div>
 
             <div class="home-area blue-home">
-                <h3>Blue Home</h3>
                 <div class="home-pieces">${blueHomePieces || "Empty"}</div>
             </div>
         </div>
     `;
 
-    winnerText.textContent =
-        game.winner
-            ? `Winner: ${game.winner}`
-            : "";
+    winnerText.textContent = "";
 
     rollButton.classList.toggle("disabled-dice", Boolean(game.winner) || game.diceValue !== null);
 }
