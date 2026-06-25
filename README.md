@@ -48,6 +48,6 @@ I'll run the same commands when I download your repos.
   - [/] Any other files you need to include.
 
 ### Finally
-- [ ] Push to GitHub.
-- [ ] Sync the changes.
-- [ ] Check submission on GitHub website.
+- [/] Push to GitHub.
+- [/] Sync the changes.
+- [/] Check submission on GitHub website.
